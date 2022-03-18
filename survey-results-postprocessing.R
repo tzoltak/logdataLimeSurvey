@@ -41,7 +41,7 @@ logData <- logData %>%
   filter(!(type %in% c("browser", "screen", "input_position"))) %>%
   mutate(across(c(which, metaKey, pageX, pageY),
                 ~if_else(. == "undefined", NA_character_, .)),
-         across(c(which, pageX, pageY), as.numeric),
+         across(c(timeStamp, which, pageX, pageY), as.numeric),
          metaKey = as.numeric(as.logical(metaKey)))
 # writing files ################################################################
 write.csv(logDataSystemInfo,

@@ -6,7 +6,7 @@ Applet is developed as a part of the scientific project [*Understanding response
 
 # General idea
 
-The applet was designed in such a way that log-data stream is created by capturing (a selected set) of JavaScript events and written down as an answer to an ordinary open-ended survey question (however hidden from the respondent). This allows it to be rather small and simple as it relies on LimeSurvey's ability to asynchronously save responses to questions to a database as respondent proceeds through a survey screen also for writing down a log-data stream. Also, availibility of the *JQuery* JavaScript library within the *LImeSurvey* makes it easier to consistently handle events between different web browsers.
+The applet was designed in such a way that log-data stream is created by capturing (a selected set) of JavaScript events and written down as an answer to an ordinary open-ended survey question (however hidden from the respondent). This allows it to be rather small and simple as it relies on LimeSurvey's ability to asynchronously save responses to questions to a database as respondent proceeds through a survey screen also for writing down a log-data stream. Also, availability of the *JQuery* JavaScript library within the *LImeSurvey* makes it easier to consistently handle events between different web browsers.
 
 However, this approach has also some downsides. Log accumulates and at some point it may be so large that handling its asynchronous saving to a database may cause lags in interaction between respondent and survey interface. Consequently, using the applet is reasonable only for surveys in which respondent is supposed not to spent too much time on a single survey screen. Second important limitation is that log-data returned by the applet are somewhat *low-level* ones and typically need a considerable amount off further transformations to create analytically useful process indicators.
 
@@ -59,11 +59,11 @@ If you collect log-data using the applet it is often useful to include at the en
 
 Because log-data is saved in the same way as answers to ordinary questions, you may upload it from *LimeSurvey* as a part of survey results by exporting them to a CSV file. Nevertheless it is worth considering exporting responses to ordinary questions and to log-data-storing questions to two separate files because this latter ones are often quite large.
 
-Next you may use R script included in the file *survey-results-postprocessing.R* to convert data exported from LimeSurvey to a typical *long* tabular representation of log-data and save it to CSV files. Script extracts data to three different files:
+Next you may use R script included in the file *survey-results-postprocessing.R* to convert data exported from *LimeSurvey* to a typical *long* tabular representation of log-data and save it to CSV files. Script extracts data to three different files:
 
 1.  Storing general system information collected once a survey screen loaded,
 
-2.  Storing information about position of survey controls (HTML *INPUT* elements), that may be further used to perform data standardisation aiming at taking into account differences in a survey screen layout coming primarily from different size of a browser window.
+2.  Storing information about position of survey controls (HTML INPUT elements), that may be further used to perform data standardisation aiming at taking into account differences in a survey screen layout coming primarily from different size of a browser window.
 
 3.  Storing data about respondents' actions (be aware this one is often a big one).
 
@@ -71,9 +71,11 @@ Script depends on *tidyr* and *dplyr* R libraries. If you don't have them instal
 
 Script uses base R's functions to read and write CSV files what may cause it long time to run if you have a lot of data. If this is problem for you, please consider modifying it so it uses functions from the *readr* package that are much faster.
 
+In the future script will be probably expanded (and perhaps split off to became a R package) to cover additional preprocessing of data regarding some types of events that is needed to make this data even basically analytically useful (compare description of *scroll* and *resize* events below bearing in mind that *scroll* events affect somehow what is reported by *mousemove* events). However, at the moment this features are missing.
+
 ## Further processing the log-data
 
-In collected log-data elements of the survey interface are typically identified by their so-called *SGQA identifiers* that are a concatenation of the survey, question group, and question ids eventually along with the subquestion and answer code. While you may set subquestion and answer codes to be quite *readable* while preparing your survey, survey, question group and question ids are simply integers used internally by the *LimeSurvey* database (and while you can easy see them in the LimeSurvey interface, you will probably won't remember which number was assigned to which question). To automatically map this identifiers to question *codes* you will find useful **a survey structure file** you may create using a survey export function in the *LimeSurvey* interface.
+In collected log-data elements of the survey interface are typically identified by their so-called [*SGQA identifiers*](https://manual.limesurvey.org/SGQA_identifier) that are a concatenation of the survey, question group, and question ids eventually along with the subquestion and answer code. While you may set subquestion and answer codes to be quite *readable* while preparing your survey, survey, question group and question ids are simply integers used internally by the *LimeSurvey* database (and while you can easy see them in the LimeSurvey interface, you will probably won't remember which number was assigned to which question). To automatically map this identifiers to question *codes* you will find useful **a survey structure file** you may create using a survey export function in the *LimeSurvey* interface.
 
 # Data collected
 
@@ -100,7 +102,7 @@ For each screen there are always two rows in a created file:
 Each row represents a single HTML INPUT element on a survey screen that is used to mark/enter respondent's responses.
 
 | Column name    | Column content                                                                                                                                  |
-|---------------------|---------------------------------------------------|
+|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
 | token          | respondent's id                                                                                                                                 |
 | screen         | code of the question from which log-data were extracted                                                                                         |
 | target.tagName | "INPUT"                                                                                                                                         |
@@ -117,30 +119,30 @@ Please note, that positions reported by `pageX` and `pageY` are nominal ones, in
 
 Each row represents a single captured event.
 
-| Column name    | Column content                                                                                                                                                                                                                                                                                                                                                                                            |
-|---------------------|---------------------------------------------------|
-| token          | respondent's id                                                                                                                                                                                                                                                                                                                                                                                           |
-| screen         | code of the question from which log-data were extracted                                                                                                                                                                                                                                                                                                                                                   |
-| timeStamp      | time of a given action counted **since a given survey screen was loaded** [ms]                                                                                                                                                                                                                                                                                                                            |
-| type           | action (JavaScript event) type - see table below                                                                                                                                                                                                                                                                                                                                                          |
-| target.tagName | HTML tag of an element that triggered an event                                                                                                                                                                                                                                                                                                                                                            |
-| target.id      | either: 1) HTML id of an element that triggered an event - if it had this id defined, 2) HTML id of an INPUT element that is a *child* of an element that triggered an event (specifically if event was triggered by a table cell that contains an INPUT element than id of this input is reported), 3) empty; these ids often include a [SGQA identifier](https://manual.limesurvey.org/SGQA_identifier) |
-| target.class   | CSS classes of an element that triggered an event (if it had some defined)                                                                                                                                                                                                                                                                                                                                |
-| which          | in case of *click-*, *mouse-* and *key-type* events integer code identifying which mouse button or keyboard key was pressed                                                                                                                                                                                                                                                                               |
-| metaKey        | in case of *key-type* events 1 if some *meta* key (CNTRL, SHIFT, ALT) was pressed at the same time                                                                                                                                                                                                                                                                                                        |
-| pageX          | horizontal position of an event **on the page** (website) [px]                                                                                                                                                                                                                                                                                                                                            |
-| pageY          | vertical position of an event **on the page** (website) [px]                                                                                                                                                                                                                                                                                                                                              |
-| broken         | 1 if information in a given row is incomplete (because some problems occurred while writing data to a database by *LImeSurvey*), 0 otherwise                                                                                                                                                                                                                                                              |
+| Column name    | Column content                                                                                                                                                                                                                                                                                                                                          |
+|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| token          | respondent's id                                                                                                                                                                                                                                                                                                                                         |
+| screen         | code of the question from which log-data were extracted                                                                                                                                                                                                                                                                                                 |
+| timeStamp      | number of milliseconds between a given action and 1 January 1970 00:00:00                                                                                                                                                                                                                                                                               |
+| type           | action (JavaScript event) type - see table below                                                                                                                                                                                                                                                                                                        |
+| target.tagName | HTML tag of an element that triggered an event                                                                                                                                                                                                                                                                                                          |
+| target.id      | either: 1) HTML id of an element that triggered an event - if it had this id defined, 2) HTML id of an INPUT element that is a *child* of an element that triggered an event - if it is a TD element (i.e. table cell) in a table-format question, 3) empty; these ids often include a [SGQA identifier](https://manual.limesurvey.org/SGQA_identifier) |
+| target.class   | CSS classes of an element that triggered an event (if it had some defined)                                                                                                                                                                                                                                                                              |
+| which          | in case of *click-*, *mouse-* and *key-type* events integer code identifying which mouse button or keyboard key was pressed                                                                                                                                                                                                                             |
+| metaKey        | in case of *key-type* events 1 if some *meta* key (CNTRL, SHIFT, ALT) was pressed at the same time                                                                                                                                                                                                                                                      |
+| pageX          | horizontal position of an event **on the page** (website) [px]                                                                                                                                                                                                                                                                                          |
+| pageY          | vertical position of an event **on the page** (website) [px]                                                                                                                                                                                                                                                                                            |
+| broken         | 1 if information in a given row is incomplete (because some problems occurred while writing data to a database by *LImeSurvey*), 0 otherwise                                                                                                                                                                                                            |
 
-Table below describes which properties are available for which types of events (please note that the applet uses the [*JQuery*](https://jquery.com/) library event handlers.):
+Table below describes which properties are available for which types of events. Please note that the applet extracts only some properties that are most widely used across different types of events. Also:
 
--   \+ means a property is available,
--   \~ means that in general it is available but for some event of a given type it may be empty,
--   specific value means that this value is always reported for a given type of events,
--   NA means that a property is not defined for a given type of event.
+1)  In a case of *resize* events it reports `pageX` and `pageY` filling there browser window width and height instead these are not reported by an event object itself;
+2)  In a case of *scroll* events it reports `pageX` and `pageY` filling there **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) instead these are not reported by an event object itself;
+3)  *pageLoaded* is not a JavaScript event - it is a convention used by the applet.
 
 | Event type  | target.tagName | target.id | target.class | which | metaKey | pageX | pageY |
-|---------|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
+|-------------|:--------------:|:---------:|:------------:|:-----:|:-------:|:-----:|:-----:|
+| pageLoaded  |       NA       |    NA     |      NA      |  NA   |   NA    |  NA   |  NA   |
 | mousedown   |       \+       |    \~     |      \~      |  \+   |   \+    |  \+   |  \+   |
 | mouseup     |       \+       |    \~     |      \~      |  \+   |   \+    |  \+   |  \+   |
 | click       |       \+       |    \~     |      \~      |   1   |   \+    |  \~   |  \~   |
@@ -160,6 +162,11 @@ Table below describes which properties are available for which types of events (
 | copy        |       \+       |    \~     |      \~      |  NA   |   NA    |  NA   |  NA   |
 | cut         |       \+       |    \~     |      \~      |  NA   |   NA    |  NA   |  NA   |
 | paste       |       \+       |    \~     |      \~      |  NA   |   NA    |  NA   |  NA   |
+
+-   \+ means a property is available,
+-   \~ means that in general it is available but for some event of a given type it may be empty,
+-   specific value means that this value is always reported for a given type of events,
+-   NA means that a property is not defined for a given type of event and it will have value "undefined" assigned n a log.
 
 Some more detailed description of what each event type represents is provided below. Please note that the applet uses the [*JQuery*](https://jquery.com/) library event handlers.
 
@@ -227,7 +234,9 @@ Some more detailed description of what each event type represents is provided be
 
     -   Scrolling the page (website);
 
-    -   Columns `pageX` and `pageY` report the length of scrolling (in horizontal and vertical dimension respectively);
+    -   Columns `pageX` and `pageY` report **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) **after the scrolling happened**;
+
+        -   That means that **to get actual length of a given scrolling one needs to compare these values to the values of the same columns in the previous *scroll* event** (if it happened);
 
     -   Analogously to *mousemove* events it has only a time stamp, but no timespan;
 
@@ -271,11 +280,13 @@ Some more detailed description of what each event type represents is provided be
 
 -   *resize*:
 
-    -   Changing a size of a browser window;
+    -   Event can be trigerred either by changing a size of a browser window or a size **or any other *resizable* element on the page** (in LimeSurvey these are typically TEXTAREA elements in text format questions);
 
-    -   Columns `pageX` and `pageY` reports size of the window after resizing;
+    -   Nevertheless **columns `pageX` and `pageY` always report size of the window after resizing (that might not changed if something other than a browser window was resized)**;
 
-    -   Depending on a web browser this event may be trigerred only once during a given resize or *continously* while resizing is taking place (given it lasts a little longer);
+        -   **One needs to compare values of these column in a given event end the previous *resize* event or ssystem information recorded once page loaded to determine wether browser window was actually resized**;
+
+    -   Depending on a web browser this event may be trigerred only once during a given resize (i.e. once it ended) or *continously* while resizing is taking place (given it lasts a little longer);
 
 -   *copy,* *cut*, *paste*:
 

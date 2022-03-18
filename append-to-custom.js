@@ -5,6 +5,7 @@ var mouseMovesFreq = 100; // milliseconds
 // Don't modify those two below
 var timeLastRecordedMouseMove = 0;
 var logdataContainer;
+var timeLoaded;
 
 $(document).on('ready pjax:scriptcomplete', function(){
     /**
@@ -12,6 +13,7 @@ $(document).on('ready pjax:scriptcomplete', function(){
      * @see https://learn.jquery.com/using-jquery-core/document-ready/
      */
     /* Initialisation */
+	timeLoaded = (new Date).getTime();
     logdataContainer = $("div.logdata_container textarea").first();
     if (logdataContainer.length > 0) {
         $(document).on("click", saveEvent);
@@ -36,6 +38,7 @@ $(document).on('ready pjax:scriptcomplete', function(){
 
         // Write down informations about the environment
         logdataContainer.val(logdataContainer.val().concat(
+			timeLoaded, ";pageLoaded;;;;;;;;|",
             "-1;browser;'", navigator.userAgent.replace(/;/g, ","), "';", navigator.language, ";;;;",
             window.innerWidth
             || document.documentElement.clientWidth
@@ -72,7 +75,8 @@ $(document).on('ready pjax:scriptcomplete', function(){
 });
 
 var saveEvent = function(event) {
-    if (event.timeStamp <= recordingTimeLimit) {
+	event.timeStamp = (new Date).getTime();
+    if ((event.timeStamp - timeLoaded) <= recordingTimeLimit) {
         if (event.type == "mousemove" && (event.timeStamp - timeLastRecordedMouseMove) < mouseMovesFreq) {
             return(false)
         } else if (event.type == "mousemove") {
