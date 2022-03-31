@@ -39,7 +39,8 @@ logDataInputPositions <- logData %>%
   filter(grepl("answer", target.id), pageX > 0, pageY > 0)
 logData <- logData %>%
   filter(!(type %in% c("browser", "screen", "input_position"))) %>%
-  mutate(across(c(which, metaKey, pageX, pageY),
+  mutate(across(c(target.tagName, target.id, target.class,
+                  which, metaKey, pageX, pageY),
                 ~if_else(. == "undefined", NA_character_, .)),
          across(c(timeStamp, which, pageX, pageY), as.numeric),
          metaKey = as.numeric(as.logical(metaKey)))

@@ -2,7 +2,7 @@
 
 This repository contains code of the JavaScript applet that was designed to collect log-data (paradata) describing actions overtaken by respondent while completing on-line survey on the [*LimeSurvey*](https://www.limesurvey.org/) web-survey platform.
 
-Applet is developed as a part of the scientific project [*Understanding response styles in self-report data: consequences, remedies and sources*](https://rstyles.ifispan.edu.pl/en/)financed by the National Science Centre (NCN) research grant ([2019/33/B/HS6/00937](https://projekty.ncn.gov.pl/en/index.php?projekt_id=446393)) and carried out at the Institute of Philosophy and Sociology of the Polish Academy of Sciences.
+Applet is developed as a part of the scientific project [Understanding response styles in self-report data: consequences, remedies and sources](https://rstyles.ifispan.edu.pl/en/) financed by the National Science Centre (NCN) research grant ([2019/33/B/HS6/00937](https://projekty.ncn.gov.pl/en/index.php?projekt_id=446393)) and carried out at the Institute of Philosophy and Sociology of the Polish Academy of Sciences.
 
 # General idea
 
@@ -12,7 +12,7 @@ However, this approach has also some downsides. Log accumulates and at some poin
 
 # How to use
 
-## Creating/modyfing a *survey theme*
+## Creating/modifying a *survey theme*
 
 Applet is designed to be implemented using *LimeSurvey*'s *Theme editor* (it was called *Template editor* in previous versions of *LimeSurvey*):
 
@@ -24,7 +24,7 @@ Applet is designed to be implemented using *LimeSurvey*'s *Theme editor* (it was
 
     -   *custom.js* - append content of the file *append-to-custom.js* from this repository to this file and save.
 
-        -   You may modify values of variables *recordingTimeLimit* and/or *mouseMovesFreq* (please note that the latter describes the lower bound for frequency and not the actual frequency that depends on many factor inculding respondent machine's load at a given moment) to change how huge the collected log may be.
+        -   You may modify values of variables *recordingTimeLimit* and/or *mouseMovesFreq* (please note that the latter describes the lower bound for frequency and not the actual frequency that depends on many factor including respondent machine's load at a given moment) to change how huge the collected log may be.
 
 3.  While done you're ready to use a log-data collecting *theme* in your surveys.
 
@@ -102,7 +102,7 @@ For each screen there are always two rows in a created file:
 Each row represents a single HTML INPUT element on a survey screen that is used to mark/enter respondent's responses.
 
 | Column name    | Column content                                                                                                                                  |
-|----------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+|--------------|----------------------------------------------------------|
 | token          | respondent's id                                                                                                                                 |
 | screen         | code of the question from which log-data were extracted                                                                                         |
 | target.tagName | "INPUT"                                                                                                                                         |
@@ -120,7 +120,7 @@ Please note, that positions reported by `pageX` and `pageY` are nominal ones, in
 Each row represents a single captured event.
 
 | Column name    | Column content                                                                                                                                                                                                                                                                                                                                          |
-|----------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|------------|------------------------------------------------------------|
 | token          | respondent's id                                                                                                                                                                                                                                                                                                                                         |
 | screen         | code of the question from which log-data were extracted                                                                                                                                                                                                                                                                                                 |
 | timeStamp      | number of milliseconds between a given action and 1 January 1970 00:00:00                                                                                                                                                                                                                                                                               |
@@ -136,12 +136,12 @@ Each row represents a single captured event.
 
 Table below describes which properties are available for which types of events. Please note that the applet extracts only some properties that are most widely used across different types of events. Also:
 
-1)  In a case of *resize* events it reports `pageX` and `pageY` filling there browser window width and height instead these are not reported by an event object itself;
-2)  In a case of *scroll* events it reports `pageX` and `pageY` filling there **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) instead these are not reported by an event object itself;
+1)  *Resize* event is triggered only by resizing a browser window and it reports `pageX` and `pageY` filling there browser window width and height instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event);
+2)  *Scroll* events is triggered only by scrolling the whole page (however, no matter how) and it reports `pageX` and `pageY` filling there **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event);
 3)  *pageLoaded* is not a JavaScript event - it is a convention used by the applet.
 
 | Event type  | target.tagName | target.id | target.class | which | metaKey | pageX | pageY |
-|-------------|:--------------:|:---------:|:------------:|:-----:|:-------:|:-----:|:-----:|
+|---------|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
 | pageLoaded  |       NA       |    NA     |      NA      |  NA   |   NA    |  NA   |  NA   |
 | mousedown   |       \+       |    \~     |      \~      |  \+   |   \+    |  \+   |  \+   |
 | mouseup     |       \+       |    \~     |      \~      |  \+   |   \+    |  \+   |  \+   |
@@ -168,7 +168,7 @@ Table below describes which properties are available for which types of events. 
 -   specific value means that this value is always reported for a given type of events,
 -   NA means that a property is not defined for a given type of event and it will have value "undefined" assigned n a log.
 
-Some more detailed description of what each event type represents is provided below. Please note that the applet uses the [*JQuery*](https://jquery.com/) library event handlers.
+Some more detailed description of what each event type represents is provided below. Please note that the applet uses the [*JQuery*](https://jquery.com/) library event handlers. That means specifically that *resize* and *scroll* events are triggered only by actions affecting a browser window/page (i.e. performing resizing or scrolling on elements within the page, like TEXTAREA elements, do not trigger these events).
 
 -   *mousedown*:
 
@@ -178,17 +178,17 @@ Some more detailed description of what each event type represents is provided be
 
     -   Triggered by releasing any of the mouse buttons (or using analogous features of other kinds of pointing devices);
 
-    -   Should be preceeded by a *mousedown* event;
+    -   Should be preceded by a *mousedown* event;
 
-    -   Typically event *click* or *dblclick* is trigered directly afterwards;
+    -   Typically event *click* or *dblclick* is triggered directly afterwards;
 
 -   *click*:
 
     -   Clicking using a left mouse button (or using analogous features of other kinds of pointing devices);
 
-    -   Typically is directly preceeded by a *mouseup* event;
+    -   Typically is directly preceded by a *mouseup* event;
 
-    -   Clicking to change state of survey response often triggers two almost simultaneous *click* events: one trigerred by a LABEL object and second trigerred by an INPUT object for which a given label is defined;
+    -   Clicking to change state of survey response often triggers two almost simultaneous *click* events: one triggered by a LABEL object and second triggered by an INPUT object for which a given label is defined;
 
     -   In *LimeSuvey* respondent may (un)mark a response in table-format questions also by clicking on a cell that contains an INPUT (*radio-button*) showing response status and not on this INPUT itself - in such a case *LimeSurvey* will trigger additional *click* event on an INPUT but it will have no `pageX` and `pageY` values defined;
 
@@ -196,29 +196,29 @@ Some more detailed description of what each event type represents is provided be
 
     -   Double clicking using a left mouse button (or using analogous features of other kinds of pointing devices);
 
-    -   Irrespective triggering this event two separate *click* events are often trigerred as well;
+    -   Irrespective triggering this event two separate *click* events are often triggered as well;
 
 -   *contextmenu*:
 
     -   Clicking using a right mouse button (or using analogous features of other kinds of pointing devices);
 
-    -   Typically is directly preceeded by a *mouseup* event;
+    -   Typically is directly preceded by a *mouseup* event;
 
 -   *mouseover*:
 
     -   Crossing a border of a *block element* (in a meaning this term has in HTML) by a cursor while getting onto this element;
 
-    -   May be trigerred as a result of either moving a cursor or scrolling;
+    -   May be triggered as a result of either moving a cursor or scrolling;
 
-    -   **Usefull to prepare process inidicators desribing *hovering*;**
+    -   **Useful to prepare process indicators describing *hovering*;**
 
 -   *mouseout*:
 
     -   Crossing a border of a *block element* (in a meaning this term has in HTML) by a cursor while getting out of this element;
 
-    -   May be trigerred as a result of either moving a cursor or scrolling;
+    -   May be triggered as a result of either moving a cursor or scrolling;
 
-    -   **Usefull to prepare process inidicators desribing *hovering*;**
+    -   **Useful to prepare process indicators describing *hovering*;**
 
 -   *mousemove:*
 
@@ -228,19 +228,22 @@ Some more detailed description of what each event type represents is provided be
 
     -   Actual moves of a cursor must be derived from information on *mousemove* events by comparing positions and time stamps reported in consecutive *mousemove* events;
 
-        -   While deriving cursor moves one may also correct for *scroll* events that occured between consecutive *mousemove* events because scrolling makes position of the curor reported by *mousemove* change even with no actual move of the pointing device;
+        -   While deriving cursor moves one may also correct for *scroll* events that occurred between consecutive *mousemove* events because scrolling makes position of the cursor reported by *mousemove* change even with no actual move of the pointing device;
 
 -   *scroll*:
 
     -   Scrolling the page (website);
 
+        -   Scrolling is making page *move within a browser window* no matter what caused this move - this event may occur either due to using a scrollbar in a browser window, using mouse wheel, using touch-pad gestures, using arrow keys on keyboard, or switching to next input field (that was not visible in the window) using a *tab* key (and perhaps even due to some other actions I haven't thought of already).
+
     -   Columns `pageX` and `pageY` report **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) **after the scrolling happened**;
 
+        -   These are not reported by *scroll* event itself but are captured by the applet while handling an event;
         -   That means that **to get actual length of a given scrolling one needs to compare these values to the values of the same columns in the previous *scroll* event** (if it happened);
 
     -   Analogously to *mousemove* events it has only a time stamp, but no timespan;
 
-    -   Affects cursor position reported by *mousemove* (as it makes cursor move through the page) without actual pointing device move;
+    -   Affects cursor position reported by *mousemove* (as it makes cursor move through the page) without actual pointing device move.
 
 -   *keydown*:
 
@@ -248,21 +251,21 @@ Some more detailed description of what each event type represents is provided be
 
     -   If a key is constantly pushed down it will be triggered continuously with some frequency (not I'm not sure what this frequency can be);
 
-    -   Typically preceeds a *keyup* event;
+    -   Typically precedes a *keyup* event;
 
 -   *keyup*:
 
     -   Releasing a keyboard key that was pressed;
 
-    -   Typically directly preceeded by a *keydown* event;
+    -   Typically directly preceded by a *keydown* event;
 
 -   *keypress:*
 
     -   Pressing a keyboard key;
 
-    -   Typically trigerred **between** some *keydown* and *keyup* event
+    -   Typically triggered **between** some *keydown* and *keyup* event
 
-    -   May return another key code (in column `which`) than a preceeding *keydown* event - generally code reported by *keypress* describes a character generated by pressing a key (perhaps with some *meta kys* pressed at the same time) while *keydown* reports code of a *raw* keyboard key that was pressed;
+    -   May return another key code (in column `which`) than a preceding *keydown* event - generally code reported by *keypress* describes a character generated by pressing a key (perhaps with some *meta keys* pressed at the same time) while *keydown* reports code of a *raw* keyboard key that was pressed;
 
 -   *change*:
 
@@ -280,13 +283,14 @@ Some more detailed description of what each event type represents is provided be
 
 -   *resize*:
 
-    -   Event can be trigerred either by changing a size of a browser window or a size **or any other *resizable* element on the page** (in LimeSurvey these are typically TEXTAREA elements in text format questions);
+    -   Event is triggered by changing a size of a browser window;
 
-    -   Nevertheless **columns `pageX` and `pageY` always report size of the window after resizing (that might not changed if something other than a browser window was resized)**;
+    -   Columns `pageX` and `pageY` report size of the window after resizing;
 
-        -   **One needs to compare values of these column in a given event end the previous *resize* event or ssystem information recorded once page loaded to determine wether browser window was actually resized**;
+        -   These are not reported by *resize* event itself but are captured by the applet while handling an event;
+        -   One needs to compare values of these columns in a given event end in the previous *resize* event or system information recorded once page loaded to determine how the browser window size has changed;
 
-    -   Depending on a web browser this event may be trigerred only once during a given resize (i.e. once it ended) or *continously* while resizing is taking place (given it lasts a little longer);
+    -   Depending on a web browser this event may be triggered only once during a given resize (i.e. once it ended) or continuously while resizing is taking place (given it lasts a little longer);
 
 -   *copy,* *cut*, *paste*:
 
