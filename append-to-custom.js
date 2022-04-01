@@ -64,7 +64,7 @@ $(document).on('ready pjax:scriptcomplete', function(){
                     $(element).prop("id"), ";",
                     $(element).prop("className"), ";",
                     $(element).width(), ";",
-                    $(element).height(), ",",
+                    $(element).height(), ";",
                     $(element).offset().left, ";",
                     $(element).offset().top, ";",
                     "|"
