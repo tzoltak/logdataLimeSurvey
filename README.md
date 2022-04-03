@@ -59,23 +59,9 @@ If you collect log-data using the applet it is often useful to include at the en
 
 Because log-data is saved in the same way as answers to ordinary questions, you may upload it from *LimeSurvey* as a part of survey results by exporting them to a CSV file. Nevertheless it is worth considering exporting responses to ordinary questions and to log-data-storing questions to two separate files because this latter ones are often quite large.
 
-Next you may use R script included in the file *survey-results-postprocessing.R* to convert data exported from *LimeSurvey* to a typical *long* tabular representation of log-data and save it to CSV files. Script extracts data to three different files:
+You should also export your survey structure from *LimeSurvey* to a text (tab-delimited) file. Although this information is not necessary, it will enable to *label* data about elements that triggerred events recorded in log-data with question, subquestion and answer codes. It will also help to correct reported positions of INPUT elements in array format questions.
 
-1.  Storing general system information collected once a survey screen loaded,
-
-2.  Storing information about position of survey controls (HTML INPUT elements), that may be further used to perform data standardisation aiming at taking into account differences in a survey screen layout coming primarily from different size of a browser window.
-
-3.  Storing data about respondents' actions (be aware this one is often a big one).
-
-Script depends on *tidyr* and *dplyr* R libraries. If you don't have them installed, please run `install.packages(c("tidyr", "dplyr"))`
-
-Script uses base R's functions to read and write CSV files what may cause it long time to run if you have a lot of data. If this is problem for you, please consider modifying it so it uses functions from the *readr* package that are much faster.
-
-In the future script will be probably expanded (and perhaps split off to became a R package) to cover additional preprocessing of data regarding some types of events that is needed to make this data even basically analytically useful (compare description of *scroll* and *resize* events below bearing in mind that *scroll* events affect somehow what is reported by *mousemove* events). However, at the moment this features are missing.
-
-## Further processing the log-data
-
-In collected log-data elements of the survey interface are typically identified by their so-called [*SGQA identifiers*](https://manual.limesurvey.org/SGQA_identifier) that are a concatenation of the survey, question group, and question ids eventually along with the subquestion and answer code. While you may set subquestion and answer codes to be quite *readable* while preparing your survey, survey, question group and question ids are simply integers used internally by the *LimeSurvey* database (and while you can easy see them in the LimeSurvey interface, you will probably won't remember which number was assigned to which question). To automatically map this identifiers to question *codes* you will find useful **a survey structure file** you may create using a survey export function in the *LimeSurvey* interface.
+Having these data exported from *LimeSurvey*, you should use R package [logDataLimeSurveyR](https://github.com/tzoltak/logDataLimeSurveyR) to preprocess it to a more analytically-useful form. The package is already in its infancy and will be further developed.
 
 # Data collected
 
