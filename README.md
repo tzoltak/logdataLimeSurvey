@@ -61,7 +61,7 @@ Because log-data is saved in the same way as answers to ordinary questions, you 
 
 You should also export your survey structure from *LimeSurvey* to a text (tab-delimited) file. Although this information is not necessary, it will enable to *label* data about elements that triggerred events recorded in log-data with question, subquestion and answer codes. It will also help to correct reported positions of INPUT elements in array format questions.
 
-Having these data exported from *LimeSurvey*, you should use R package [logDataLimeSurveyR](https://github.com/tzoltak/logDataLimeSurveyR) to preprocess it to a more analytically-useful form. The package is already in its infancy and will be further developed.
+Having these data exported from *LimeSurvey*, you should use R package [logLime](https://github.com/tzoltak/logLime) to preprocess it to a more analytically-useful form. The package is already in its infancy and will be further developed.
 
 # Data collected
 
