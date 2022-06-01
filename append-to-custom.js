@@ -1,3 +1,5 @@
+// V.1.0
+
 // This two variables are used to limit the ammount of log-data collected
 // to decrease the probability that respondent will encounter lags
 var recordingTimeLimit = 120000; // milliseconds
@@ -109,13 +111,13 @@ var saveEvent = function(event) {
         var logLine = "".concat(
             event.timeStamp, ";",
             event.type, ";",
-            event.target.tagName, ";",
-            id, ";",
-            event.target.className, ";",
-            event.which, ";",
-            event.metaKey, ";",
-            pageX, ";",
-            pageY, ";",
+            (typeof event.target.tagName === 'undefined') ? "" : event.target.tagName, ";",
+            (typeof id === 'undefined') ? "" : id, ";",
+            (typeof event.target.className === 'undefined') ? "" : event.target.className, ";",
+            (typeof event.which === 'undefined') ? "" : event.which, ";",
+            (typeof event.metaKey === 'undefined') ? "" : event.metaKey, ";",
+            (typeof pageX === 'undefined') ? "" : pageX, ";",
+            (typeof pageY === 'undefined') ? "" : pageY, ";",
             "|"
         );
         logdataContainer.val(logdataContainer.val().concat(logLine));
