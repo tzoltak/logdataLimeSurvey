@@ -1,6 +1,8 @@
-# Log-data collection in LimeSurvey
+# *logdataLimeSurvey* v.1.1
 
-This repository contains code of the JavaScript applet that was designed to collect log-data (paradata) describing actions overtaken by respondent while completing on-line survey on the [*LimeSurvey*](https://www.limesurvey.org/) web-survey platform.
+# Log-data collection in *LimeSurvey*
+
+This repository contains code of a JavaScript applet that was designed to collect log-data (paradata) describing actions overtaken by respondent while completing on-line survey on the [*LimeSurvey*](https://www.limesurvey.org/) web-survey platform.
 
 Applet is developed as a part of the scientific project [Understanding response styles in self-report data: consequences, remedies and sources](https://rstyles.ifispan.edu.pl/en/) financed by the National Science Centre (NCN) research grant ([2019/33/B/HS6/00937](https://projekty.ncn.gov.pl/en/index.php?projekt_id=446393)) and carried out at the Institute of Philosophy and Sociology of the Polish Academy of Sciences.
 
@@ -44,8 +46,7 @@ To enable log-data collection in a survey you need to:
 
     -   This should be a question of type *Long free text* or *Huge free text*,
 
-    -   You need to set a CSS class of this question to be *logdata_container*. To do so fill in *logdata_container* into the *CSS class* field in the *Display* question options set.
-        This will enable the applet to identify that it should write log-data there and at the same time it makes question hidden from the respondent.
+    -   You need to set a CSS class of this question to be *logdata_container*. To do so fill in *logdata_container* into the *CSS class* field in the *Display* question options set. This will enable the applet to identify that it should write log-data there and at the same time it makes question hidden from the respondent.
 
 Log-data will be captured on all the question groups (survey screen) that contain a question configured as described above.
 
@@ -75,7 +76,7 @@ If you know that you don't want to gather some type of events, especially:
 -   *mouseovers* and *mouseouts* (you don't need to compute indices summarising hovering times over specific survey page elements) or
 -   *keydowns*, *keyups* and perhaps *keypresses* - if survey contains some text format questions (otherwise it will make a little difference, because respondents are unlikely to use keyboard a lot)
 
-you may disable collecting them by simply commenting a corresponding row(s) among rows 19-37 of *append-to-custom.js* (to comment add "//" at the beginning of a line). This will reduce the size of collected log and consequently diminish a risk of lags and errors with saving logs to a database. While doing so be aware that the changes you apply in *LimeSurvey*'s theme editor affect all the surveys using a given *theme*, so you may need to create a copy of a *theme* to avoid side effects.
+you may disable collecting them by simply commenting a corresponding row(s) among rows 21-39 of *append-to-custom.js* (to comment add "//" at the beginning of a line). This will reduce the size of collected log and consequently diminish a risk of lags and errors with saving logs to a database. While doing so be aware that **the changes you apply in *LimeSurvey*'s theme editor affect all the surveys using a given *theme***, so you may need to create a copy of a *theme* to avoid side effects.
 
 # Data collected
 
@@ -102,7 +103,7 @@ For each screen there are always two rows in a created file:
 Each row represents a single HTML INPUT element on a survey screen that is used to mark/enter respondent's responses.
 
 | Column name    | Column content                                                                                                                                  |
-|-----------------|-------------------------------------------------------|
+|------------------|------------------------------------------------------|
 | token          | respondent's id                                                                                                                                 |
 | screen         | code of the question from which log-data were extracted                                                                                         |
 | target.tagName | "INPUT"                                                                                                                                         |
@@ -120,7 +121,7 @@ Please note, that positions reported by `pageX` and `pageY` are nominal ones, in
 Each row represents a single captured event.
 
 | Column name    | Column content                                                                                                                                                                                                                                                                                                                                          |
-|----------------|--------------------------------------------------------|
+|------------------|------------------------------------------------------|
 | token          | respondent's id                                                                                                                                                                                                                                                                                                                                         |
 | screen         | code of the question from which log-data were extracted                                                                                                                                                                                                                                                                                                 |
 | timeStamp      | number of milliseconds between a given action and 1 January 1970 00:00:00                                                                                                                                                                                                                                                                               |
@@ -136,11 +137,12 @@ Each row represents a single captured event.
 
 Table below describes which properties are available for which types of events. Please note that the applet extracts only some properties that are most widely used across different types of events. Also:
 
-1\) *Resize* event is triggered only by resizing a browser window and it reports `pageX` and `pageY` filling there browser window width and height instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event); 2) *Scroll* events is triggered only by scrolling the whole page (however, no matter how) and it reports `pageX` and `pageY` filling there **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event); 3) *pageLoaded* is not a JavaScript event - it is a convention used by the applet.
+1\) *Resize* event is triggered only by resizing a browser window and it reports `pageX` and `pageY` filling there browser window width and height instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event); 2) *Scroll* events is triggered only by scrolling the whole page (however, no matter how) and it reports `pageX` and `pageY` filling there **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event); 3) *pageLoaded* and is not a JavaScript event - it is a convention used by the applet.
 
 | Event type  | target.tagName | target.id | target.class | which | metaKey | pageX | pageY |
 |---------|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
 | pageLoaded  |       NA       |    NA     |      NA      |  NA   |   NA    |  NA   |  NA   |
+| submit      |       NA       |    NA     |      NA      |  NA   |   NA    |  NA   |  NA   |
 | mousedown   |       \+       |    \~     |      \~      |  \+   |   \+    |  \+   |  \+   |
 | mouseup     |       \+       |    \~     |      \~      |  \+   |   \+    |  \+   |  \+   |
 | click       |       \+       |    \~     |      \~      |   1   |   \+    |  \~   |  \~   |
@@ -167,6 +169,18 @@ Table below describes which properties are available for which types of events. 
 -   NA means that a property is not defined for a given type of event and it will have missing value in a log.
 
 Some more detailed description of what each event type represents is provided below. Please note that the applet uses the [*JQuery*](https://jquery.com/) library event handlers. That means specifically that *resize* and *scroll* events are triggered only by actions affecting a browser window/page (i.e. performing resizing or scrolling on elements within the page, like TEXTAREA elements, do not trigger these events).
+
+-   *submit*:
+
+    -   Trigerred by trying to navigate to a next survey screen (technically: by submiting a form that stores responses) .
+
+    -   **This event being triggered doesn't mean that respondent completed a given survey screen!**
+
+        -   *LimeSurvey* performs checks the answers only after this event is triggered and if it find some of them invalid (due to incorrect values or due to missing responses to obligatory questions) it prevents survey screen from changing.
+
+        -   Nevertheless, *LimeSurvey* reloads a given page when it finds invalid answers.
+
+        -   The only way of distingushing between reloading a page automatically because of invalid answers and returning to the same survey screen by user navigating a survey (backwards) is by looking (in post-processing of log-data) for a *submit* event *immediately* followed by *pageLoaded* event and either removing such pairs or substituting them by some another type of event indicating that respondent tried to submit but he/she failed due to invalid answers.
 
 -   *mousedown*:
 

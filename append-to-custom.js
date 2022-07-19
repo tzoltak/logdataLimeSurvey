@@ -1,10 +1,10 @@
-// V.1.0
+// V.1.1
 
-// This two variables are used to limit the ammount of log-data collected
+// These two variables are used to limit the ammount of log-data collected
 // to decrease the probability that respondent will encounter lags
 var recordingTimeLimit = 120000; // milliseconds
 var mouseMovesFreq = 100; // milliseconds
-// Don't modify those two below
+// Don't modify these below
 var timeLastRecordedMouseMove = 0;
 var logdataContainer;
 var timeLoaded;
@@ -55,6 +55,8 @@ $(document).on('ready pjax:scriptcomplete', function(){
         // (raised by LimeSurvey when respondent wants to proceed to the next screen)
         // causes site to reload (rewriting values of inputs) but we don't want to rewrite
         // position of inputs into logdataContainer in such a situation
+		// On the other hand, this prevents from writing down input positions while
+		// respondent returns to a given screen
         if (logdataContainer.val().indexOf("-1;input_position;") === -1) {
             // write down position of every input element on the site
             // DOMobject.offset is analog of event.pageX/Y
@@ -73,6 +75,11 @@ $(document).on('ready pjax:scriptcomplete', function(){
                 ));
             });
         }
+		$( "form" ).submit(function( event ) {
+			logdataContainer.val(logdataContainer.val().concat(
+				(new Date).getTime(), ";submit;;;;;;;;|"
+			));
+		});
     }
 });
 
