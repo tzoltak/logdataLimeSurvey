@@ -37,6 +37,10 @@ $(document).on('ready pjax:scriptcomplete', function(){
         $(document).on("change", saveEvent);
         $(document).on("scroll", saveEvent);
         $(window).on("resize", saveEvent);
+        $("form").on("submit", function() {
+          logdataContainer.val(logdataContainer.val().concat(
+            (new Date).getTime(), ";submit;;;;;;;;|"));
+        });
 
         // Write down informations about the environment
         logdataContainer.val(logdataContainer.val().concat(
@@ -75,11 +79,6 @@ $(document).on('ready pjax:scriptcomplete', function(){
                 ));
             });
         }
-		$( "form" ).submit(function( event ) {
-			logdataContainer.val(logdataContainer.val().concat(
-				(new Date).getTime(), ";submit;;;;;;;;|"
-			));
-		});
     }
 });
 
