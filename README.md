@@ -1,4 +1,4 @@
-# *logdataLimeSurvey* v.1.1
+# *logdataLimeSurvey* v.1.2
 
 # Log-data collection in *LimeSurvey*
 
@@ -103,7 +103,7 @@ For each screen there are always two rows in a created file:
 Each row represents a single HTML INPUT element on a survey screen that is used to mark/enter respondent's responses.
 
 | Column name    | Column content                                                                                                                                  |
-|-------------------|-----------------------------------------------------|
+|--------------------|----------------------------------------------------|
 | token          | respondent's id                                                                                                                                 |
 | screen         | code of the question from which log-data were extracted                                                                                         |
 | target.tagName | "INPUT"                                                                                                                                         |
@@ -121,7 +121,7 @@ Please note, that positions reported by `pageX` and `pageY` are nominal ones, in
 Each row represents a single captured event.
 
 | Column name    | Column content                                                                                                                                                                                                                                                                                                                                          |
-|-------------------|-----------------------------------------------------|
+|--------------------|----------------------------------------------------|
 | token          | respondent's id                                                                                                                                                                                                                                                                                                                                         |
 | screen         | code of the question from which log-data were extracted                                                                                                                                                                                                                                                                                                 |
 | timeStamp      | number of milliseconds between a given action and 1 January 1970 00:00:00                                                                                                                                                                                                                                                                               |
@@ -137,7 +137,7 @@ Each row represents a single captured event.
 
 Table below describes which properties are available for which types of events. Please note that the applet extracts only some properties that are most widely used across different types of events. Also:
 
-1) *Resize* event is triggered only by resizing a browser window and it reports `pageX` and `pageY` filling there browser window width and height instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event); 2) *Scroll* events is triggered only by scrolling the whole page (however, no matter how) and it reports `pageX` and `pageY` filling there **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event); 3) *pageLoaded* and is not a JavaScript event - it is a convention used by the applet.
+1)  *Resize* event is triggered only by resizing a browser window and it reports `pageX` and `pageY` filling there browser window width and height instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event); 2) *Scroll* events is triggered only by scrolling the whole page (however, no matter how) and it reports `pageX` and `pageY` filling there **current scroll offsets of the page** (i.e. `scrollLeft` and `scrollTop` of the `document` object) instead these are not reported by an event object itself (i.e. the applet captures these values itself while handling an event); 3) *pageLoaded* and is not a JavaScript event - it is a convention used by the applet.
 
 | Event type  | target.tagName | target.id | target.class | which | metaKey | pageX | pageY |
 |---------|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|:-------:|
@@ -309,3 +309,11 @@ Some more detailed description of what each event type represents is provided be
 -   *copy,* *cut*, *paste*:
 
     -   Using a clipboard features on some element of the page (website).
+
+# Detecting mobile devices
+
+Applet has the feature to detect whether respondent is using a mobile device. However, it works by applying a rule from <http://detectmobilebrowsers.com> (that was defined more than 10 years ago) to what `navigator.userAgent` returns, so it need not be perfectly accurate.
+
+To use this feature you need to create in your survey a question of type *short free text* (S) and assign it a CSS class *mobile_device_check*. Script will write value "mobile" or "computer" into this question.
+
+Check is run at the moment of page has loaded. Typically it should be enough to include such a check only once in your survey.
